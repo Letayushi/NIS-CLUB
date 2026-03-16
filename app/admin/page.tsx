@@ -12,6 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { ViewRequestDialog } from "@/components/view-request-dialog"
 import { ApproveRequestDialog } from "@/components/approve-request-dialog"
 import { RejectRequestDialog } from "@/components/reject-request-dialog"
+import { EditClubDialog } from "@/components/edit-club-dialog"
 import { api } from "@/lib/api"
 import type { ClubRequest, Club } from "@/lib/types"
 import { Eye, CheckCircle, XCircle, ExternalLink, Trash2, Users } from "lucide-react"
@@ -72,6 +73,17 @@ export default function AdminPage() {
   const handleRejectRequest = (request: ClubRequest) => {
     setSelectedRequest(request)
     setRejectDialogOpen(true)
+  }
+
+  const handleDeleteClub = async (club: Club) => {
+    if (!confirm(`Удалить клуб "${club.name}"? Это действие необратимо.`)) return
+    try {
+      await api.clubs.delete(club.id)
+      refreshData()
+    } catch (e) {
+      // можно добавить тост, если понадобится
+      console.error("Failed to delete club", e)
+    }
   }
 
   return (
@@ -216,6 +228,15 @@ export default function AdminPage() {
                             Открыть
                           </Button>
                         </Link>
+                        <EditClubDialog club={club} onSuccess={refreshData} />
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-red-600 hover:text-red-700"
+                          onClick={() => handleDeleteClub(club)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                       </div>
                     </div>
                   ))}

@@ -67,6 +67,10 @@ export const api = {
         method: "POST",
         body: JSON.stringify({}),
       }),
+    delete: (id: string) =>
+      fetchJson<{ ok: boolean }>("/api/clubs/" + encodeURIComponent(id), {
+        method: "DELETE",
+      }),
   },
   requests: {
     list: () => fetchJson<import("./types").ClubRequest[]>("/api/requests"),

@@ -65,3 +65,27 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     return NextResponse.json({ error: "Ошибка сервера" }, { status: 500 })
   }
 }
+
+export async function DELETE(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const session = await getSession()
+  if (!session) return NextResponse.json({ error: "Необходима авторизация" }, { status: 401 })
+  try {
+    const { id } = await params
+    const club = await prisma.club.findUnique({
+      where: { id },
+      include: { owners: { select: { userId: true } } },
+    })
+    if (!club) return NextResponse.json({ error: "Клуб не найден" }, { status: 404 })
+    const isOwner = club.owners.some((o) => o.userId === session.userId)
+    if (!isOwner && session.role !== "admin") {
+      return NextResponse.json({ error: "Нет прав" }, { status: 403 })
+    }
+
+    await prisma.club.delete({ where: { id } })
+
+    return NextResponse.json({ ok: true })
+  } catch (e) {
+    console.error("Club delete error:", e)
+    return NextResponse.json({ error: "Ошибка сервера" }, { status: 500 })
+  }
+}

@@ -79,22 +79,6 @@ export default function LoginPage() {
                 {isLoading ? "Вход..." : "Войти"}
               </Button>
             </form>
-
-            <div className="mt-6 p-4 bg-muted rounded-lg">
-              <p className="text-sm font-medium mb-2">Тестовые аккаунты:</p>
-              <div className="space-y-1 text-xs text-muted-foreground">
-                <p>Админ: aidar@nis.edu.kz</p>
-                <p>Владелец: alina@nis.edu.kz</p>
-                <p>Ученик: daniyar@nis.edu.kz</p>
-                <p className="mt-2 italic">Пароль: password</p>
-              </div>
-              <p className="text-xs mt-4">
-                Нет аккаунта?{" "}
-                <a href="/register" className="underline">
-                  Зарегистрироваться
-                </a>
-              </p>
-            </div>
           </CardContent>
         </Card>
       </div>

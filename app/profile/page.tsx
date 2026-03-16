@@ -12,7 +12,7 @@ import { EditClubDialog } from "@/components/edit-club-dialog"
 import { CreateAnnouncementDialog } from "@/components/create-announcement-dialog"
 import { api } from "@/lib/api"
 import type { Club, ClubRequest } from "@/lib/types"
-import { Users, Calendar } from "lucide-react"
+import { Users, Calendar, Trash2 } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -70,6 +70,20 @@ export default function ProfilePage() {
   const refreshRequests = () => api.requests.list().then(setRequests).catch(() => {})
   const refreshClubs = () => api.clubs.list().then(setClubs).catch(() => {})
 
+  const handleDeleteOwnedClub = async (club: Club) => {
+    if (!confirm(`Удалить клуб "${club.name}"? Это действие необратимо.`)) return
+    try {
+      await api.clubs.delete(club.id)
+      await refreshClubs()
+    } catch (e) {
+      console.error("Failed to delete club", e)
+      toast({
+        title: "Ошибка удаления",
+        description: "Не удалось удалить клуб",
+        variant: "destructive",
+      })
+    }
+  }
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault()
     setProfileSaving(true)
@@ -239,6 +253,14 @@ export default function ProfilePage() {
                           Просмотр
                         </Button>
                       </Link>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-red-600 hover:text-red-700"
+                        onClick={() => handleDeleteOwnedClub(club)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
                 ))}
